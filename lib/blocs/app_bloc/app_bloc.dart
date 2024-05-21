@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:anti_school_test/domain/constants/app_constants.dart';
 import 'package:anti_school_test/domain/models/card.model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:csv/csv.dart';
@@ -25,11 +26,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     GoogleSheetsInit event,
     Emitter<AppState> emit,
   ) async {
-    const url =
-        'https://docs.google.com/spreadsheets/d/e/2PACX-1vToXVS9E-C0JdP0dA4j-Bu9ICPJSKiYjrY7y6CrB9FU6sy4oSfDNSGxAwv6LUwhGcvSgiuov83CdpmU/pub?gid=0&single=true&output=csv';
-
     emit(AppLoading());
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(AppConstants.googleSheetDataUrl));
     final List<String> cardsOrder = await fetchRemoteConfig();
 
     if (response.statusCode == 200) {
@@ -60,7 +58,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       cardsList.removeAt(0);
 
       emit(
-        AppLoaded(cardsList: cardsList, remoteConfigCardsOrder: cardsOrder),
+        AppLoaded(
+          cardsList: cardsList,
+          remoteConfigCardsOrder: cardsOrder,
+        ),
       );
     } else {
       log('Error fetching data: ${response.statusCode}');
@@ -87,20 +88,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
+        fetchTimeout:
+            const Duration(seconds: AppConstants.remoteConfigFetchTimeout),
         minimumFetchInterval: const Duration(hours: 1),
       ),
     );
 
     remoteConfig.setDefaults(<String, dynamic>{
-      'cards_order': 'card_3,card_2,card_5,card_1,card_4',
+      AppConstants.cardsOrderConfig: AppConstants.defaultRemoteConfigData,
     });
 
     await remoteConfig.fetchAndActivate();
 
     Map<String, dynamic> cardsOrder =
-        jsonDecode(remoteConfig.getString('cards_order'));
+        jsonDecode(remoteConfig.getString(AppConstants.cardsOrderConfig));
 
-    return List<String>.from(cardsOrder['cards_order']);
+    return List<String>.from(cardsOrder[AppConstants.cardsOrderConfig]);
   }
 }

@@ -34,5 +34,8 @@ final class AppLoaded extends AppState {
   }
 
   @override
-  List<Object?> get props => [cardsList];
+  List<Object?> get props => [
+        cardsList,
+        remoteConfigCardsOrder,
+      ];
 }
