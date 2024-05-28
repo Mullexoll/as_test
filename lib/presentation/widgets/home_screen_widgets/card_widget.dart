@@ -1,4 +1,5 @@
 import 'package:anti_school_test/domain/models/card.model.dart';
+import 'package:anti_school_test/presentation/helpers/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -7,12 +8,6 @@ class CardWidget extends StatelessWidget {
 
   const CardWidget({super.key, required this.cardData});
 
-  bool isURL(String value) {
-    var validateUriValue = value.contains("https://");
-
-    return validateUriValue;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,7 +15,7 @@ class CardWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          isURL(cardData.imageUrl)
+          Uri.tryParse(cardData.imageUrl) != null
               ? Image.network(
                   cardData.imageUrl,
                   width: 200,
@@ -37,20 +32,12 @@ class CardWidget extends StatelessWidget {
           const Gap(20),
           Text(
             cardData.word,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
+            style: mainTextStyle(),
           ),
           const Gap(20),
           Text(
             cardData.translation,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
+            style: mainTextStyle(),
           ),
         ],
       ),

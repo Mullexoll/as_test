@@ -1,4 +1,5 @@
 import 'package:anti_school_test/presentation/widgets/home_screen_widgets/card_widget.dart';
+import 'package:anti_school_test/presentation/widgets/home_screen_widgets/home_screen_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,28 +22,29 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  disableStyle() {
-    return BoxDecoration(
-      color: Colors.transparent,
-      border: Border.all(color: Colors.blueAccent, width: 2),
-      borderRadius: BorderRadius.circular(10),
-    );
+  moveToPreviousPage() {
+    setState(() {
+      if (currentPage > 0) {
+        currentPage--;
+      }
+      pageController.previousPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+    });
   }
 
-  activeStyle() {
-    return BoxDecoration(
-      border: Border.all(color: Colors.blueAccent, width: 2),
-      borderRadius: BorderRadius.circular(10),
-      gradient: const LinearGradient(
-        colors: [
-          Colors.indigo,
-          Colors.blue,
-          Colors.lightBlueAccent,
-        ],
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-      ),
-    );
+  moveToNextPage() {
+    setState(() {
+      if (currentPage <
+          (context.read<AppBloc>().state as AppLoaded).cardsList.length - 1) {
+        currentPage++;
+      }
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+    });
   }
 
   @override
@@ -85,69 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(35.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () => setState(() {
-                          if (currentPage > 0) {
-                            currentPage--;
-                          }
-                          pageController.previousPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.linear,
-                          );
-                        }),
-                        child: Container(
-                          width: 150,
-                          height: 50,
-                          decoration:
-                              currentPage == 0 ? disableStyle() : activeStyle(),
-                          child: const Center(
-                            child: Text(
-                              'Back',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => setState(() {
-                          if (currentPage < state.cardsList.length - 1) {
-                            currentPage++;
-                          }
-                          pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.linear,
-                          );
-                        }),
-                        child: Container(
-                          width: 150,
-                          height: 50,
-                          decoration: currentPage >= state.cardsList.length - 1
-                              ? disableStyle()
-                              : activeStyle(),
-                          child: const Center(
-                            child: Text(
-                              'Next',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                HomeScreenButtons(
+                  currentPage: currentPage,
+                  moveToPreviousPage: moveToPreviousPage,
+                  moveToNextPage: moveToNextPage,
+                ),
               ],
             );
           }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:anti_school_test/domain/constants/app_constants.dart';
 import 'package:anti_school_test/domain/models/card.model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:csv/csv.dart';
@@ -11,6 +10,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+
+import '../../constants/app_constants.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
